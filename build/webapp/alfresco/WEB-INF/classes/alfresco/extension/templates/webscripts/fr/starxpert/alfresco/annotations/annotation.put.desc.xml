@@ -1,0 +1,9 @@
+<webscript>
+	<shortname>update annotation</shortname>
+	<description>update annotation</description>
+	<url>/fr/starxpert/alfresco/annotations/put</url>
+	<format default="json">any</format>
+	<transaction>required</transaction>
+	<authentication>user</authentication>
+	<family>starxpert</family>
+</webscript>

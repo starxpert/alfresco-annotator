@@ -1,0 +1,453 @@
+<?xml version="1.0"?>
+<!--
+    
+	Ant Build script from StarXpert 
+	version 2.1
+-->
+
+<project name="CDG56" default="deploy-files-distant" basedir="." xmlns:jsl="antlib:com.googlecode.jslint4java">
+	<property file="${basedir}/build.properties" />
+	<property file="${basedir}/module.properties" />
+
+	<property name="ant-lib.dir" value="${basedir}/ant-lib" />
+	<property file="${ant-lib.dir}/ant.properties" />
+
+	<path id="alfresco-class.path">
+		<dirset dir="${build.jar-alfresco.dir}" />
+		<fileset dir="${alfresco-lib.dir}" includes="**/*.jar" />
+		<fileset dir="${alfresco.sdk.lib}" includes="**/*.jar" />
+	</path>
+	<path id="share-class.path">
+		<dirset dir="${build.jar-share.dir}" />
+		<fileset dir="${share-lib.dir}" includes="**/*.jar" />
+		<fileset dir="${alfresco.sdk.lib}" includes="**/*.jar" />
+	</path>
+
+	<target name="setup-build-dir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.jar-alfresco.dir}" />
+		<mkdir dir="${build.jar-share.dir}" />
+		<mkdir dir="${build.webapp-share.dir}" />
+		<mkdir dir="${build.webapp-alfresco.dir}" />
+	</target>
+
+	<target name="setup-source-dir" description="Create structure initial project">
+		<!-- Alfresco -->
+		<echo>Dossiers de configuration Alfresco</echo>
+		<mkdir dir="${config-alfresco.dir}" />
+		<mkdir dir="${config-alfresco.extension.dir}" />
+		<mkdir dir="${config-alfresco.module.dir}" />
+		<mkdir dir="${config-alfresco.messages.dir}" />
+		<echo>Dossiers des sources Alfresco</echo>
+		<mkdir dir="${source-alfresco.dir}" />
+		<mkdir dir="${java-alfresco.source.dir}" />
+		<mkdir dir="${meta-inf-alfresco.source.dir}" />
+		<mkdir dir="${web-inf-alfresco.source.dir}" />
+		<mkdir dir="${web-alfresco.source.dir}" />
+		<mkdir dir="${css-alfresco.source.dir}" />
+		<mkdir dir="${image-alfresco.source.dir}" />
+		<mkdir dir="${jsp-alfresco.source.dir}" />
+		<mkdir dir="${javascript-alfresco.source.dir}" />
+		<mkdir dir="${webscripts-alfresco.source.dir}" />
+		<echo>Dépendances Alfresco</echo>
+		<mkdir dir="${alfresco-lib.dir}" />
+
+		<!-- Share -->
+		<echo>Dossier de configuration Share</echo>
+		<mkdir dir="${config-share.dir}" />
+		<mkdir dir="${config-share.messages.dir}" />
+		<mkdir dir="${config-share.web-extension.dir}" />
+		<echo>Dossiers des sources Share</echo>
+		<mkdir dir="${source-share.dir}" />
+		<mkdir dir="${java-share.source.dir}" />
+		<mkdir dir="${meta-inf-share.source.dir}" />
+		<mkdir dir="${web-inf-share.source.dir}" />
+		<mkdir dir="${web-share.source.dir}" />
+		<mkdir dir="${component-share.source.dir}" />
+		<mkdir dir="${modules-share.source.dir}" />
+		<mkdir dir="${image-share.source.dir}" />
+		<mkdir dir="${javascript-share.source.dir}" />
+		<mkdir dir="${webscripts-share.source.dir}" />
+		<echo>Dépendances Share</echo>
+		<mkdir dir="${share-lib.dir}" />
+
+		<echo>Création du project Eclipse</echo>
+		<antcall target="_generate_eclipse_project" />
+	</target>
+
+	<!-- creates an eclipse .project and .classpath files -->
+	<target name="_generate_eclipse_project">
+		<basename property="project.dirname" file="${basedir}" />
+		<echo file=".project">
+			<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+			<projectDescription>
+				<name>${project.dirname}</name>
+				<comment>${project.title} - ${project.description}</comment>
+				<projects>
+				</projects>
+				<buildSpec>
+					<buildCommand>
+						<name>org.eclipse.jdt.core.javabuilder</name>
+						<arguments>
+						</arguments>
+					</buildCommand>
+				</buildSpec>
+				<natures>
+					<nature>org.eclipse.jdt.core.javanature</nature>
+				</natures>
+			</projectDescription>
+]]></echo>
+
+		<echo file=".classpath">
+			<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+			<classpath>
+				<classpathentry kind="src" path="alfresco/source/java"/>
+				<classpathentry kind="src" path="alfresco/source/webscripts"/>
+				<classpathentry kind="src" path="share/source/java"/>
+				<classpathentry kind="src" path="share/source/webscripts"/>
+				<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+				<classpathentry combineaccessrules="false" kind="src" path="/SDK AlfrescoEmbedded ${alfresco.version}"/>
+				<classpathentry kind="output" path="bin"/>
+			</classpath>
+]]></echo>
+	</target>
+
+	<target name="clean" description="Clean the build results">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="compile-alfresco" depends="setup-build-dir">
+		<!-- Compilation des sources java Alfresco -->
+		<mkdir dir="${build.jar-alfresco.dir}" />
+		<echo> ${java_version}</echo>
+		<javac classpathref="alfresco-class.path" debug="${java.debug}" srcdir="${java-alfresco.source.dir}" destdir="${build.jar-alfresco.dir}" includeantruntime="false" source="1.7" target="1.7" fork="yes" encoding="UTF-8" executable="${path.javac}">
+			<compilerarg value="-Xlint:unchecked" />
+			<compilerarg value="-Xlint:deprecation" />
+		</javac>
+
+		<buildnumber file="${build.jar-alfresco.dir}/build.number" />
+		<copy todir="${build.jar-alfresco.dir}" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${java-alfresco.source.dir}" defaultexcludes="false">
+				<exclude name="**/*.java" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="compile-share" depends="setup-build-dir">
+		<!-- Compilation des sources java Share -->
+		<mkdir dir="${build.jar-share.dir}" />
+		<javac classpathref="share-class.path" debug="${java.debug}" srcdir="${java-share.source.dir}" destdir="${build.jar-share.dir}" includeantruntime="false" fork="yes" encoding="UTF-8" executable="${path.javac}">
+			<compilerarg value="-Xlint:unchecked" />
+			<compilerarg value="-Xlint:deprecation" />
+		</javac>
+
+		<buildnumber file="${build.jar-share.dir}/build.number" />
+		<copy todir="${build.jar-share.dir}" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${java-share.source.dir}" defaultexcludes="false">
+				<exclude name="**/*.java" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="package-jars" depends="package-jar-alfresco, package-jar-share" description="Build all JAR" />
+
+	<target name="package-jar-alfresco" depends="compile-alfresco" description="Build a JAR file containing configuration and resource files">
+		<mkdir dir="${build.jar-alfresco.dir}/META-INF" />
+		<copy todir="${build.jar-alfresco.dir}/META-INF" includeEmptyDirs="false" failonerror="false" verbose="${ant-verbose}">
+			<fileset dir="${meta-inf-alfresco.source.dir}" />
+		</copy>
+
+		<delete file="${jar-alfresco.file}" />
+		<jar destfile="${jar-alfresco.file}" encoding="UTF-8">
+			<fileset dir="${build.jar-alfresco.dir}" excludes="**/custom*,**/*Test*" defaultexcludes="false" />
+			<zipfileset dir="${meta-inf-alfresco.source.dir}" prefix="META-INF" />
+		</jar>
+	</target>
+
+	<target name="package-jar-share" depends="compile-share" description="Build a JAR file containing configuration and resource files">
+		<mkdir dir="${build.jar-share.dir}/META-INF" />
+
+		<!-- Minify JS -->
+		<yuicompress fromdir="${meta-inf-share.source.dir}" todir="${build.jar-share.dir}/META-INF" excludes="**/*-min.js,**/*.min.js" warn="false">
+			<include name="**/*.js" />
+		</yuicompress>
+
+		<copy todir="${build.jar-share.dir}/META-INF" includeEmptyDirs="false" verbose="${ant-verbose}">
+			<fileset dir="${meta-inf-share.source.dir}" />
+		</copy>
+
+		<delete file="${jar-share.file}" />
+		<jar destfile="${jar-share.file}" encoding="UTF-8">
+			<fileset dir="${build.jar-share.dir}" excludes="**/custom*,**/*Test*" defaultexcludes="false" />
+			<zipfileset dir="${meta-inf-share.source.dir}" prefix="META-INF" />
+		</jar>
+
+	</target>
+
+	<target name="package-amps" depends="clean,package-amp-alfresco, package-amp-share" description="Package AMP" />
+
+	<target name="_prepare_module">
+		<property file="build.number" />
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}" />
+		<copy verbose="${ant-verbose}" failonerror="true" todir="${build.dir}" encoding="UTF8" file="${amp.file.properties}">
+			<filterset>
+				<filter token="ID" value="${project.name}" />
+				<filter token="TITLE" value="${project.title}" />
+				<filter token="DESCRIPTION" value="${project.description}" />
+				<filter token="VERSION" value="${projet.version.majeur}.${projet.version.mineur}_${build.number}" />
+				<filter token="ALFRESCO_VERSION" value="${alfresco.version}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="package-amp-alfresco" depends="_prepare_module, package-jar-alfresco" description="Package AMP Alfresco">
+		<zip destfile="${amp-alfresco.file}" encoding="UTF-8">
+			<fileset dir="${basedir}">
+				<include name="${amp.file.properties}" />
+				<include name="${amp.file.mappings}" />
+				<include name="WEB-INF/**/*" />
+				<exclude name="lib/*.jar" />
+				<exclude name="WEB-INF/alfresco.tld" />
+				<exclude name="WEB-INF/repo.tld" />
+			</fileset>
+			<zipfileset dir="${alfresco-lib.dir}" prefix="lib" />
+			<zipfileset file="${jar-alfresco.file}" prefix="lib" />
+			<zipfileset dir="${config-alfresco.dir}/alfresco/" prefix="config/alfresco" />
+			<zipfileset dir="${web-alfresco.source.dir}" prefix="web" />
+			<zipfileset dir="${web-inf-alfresco.source.dir}" prefix="WEB-INF" />
+		</zip>
+	</target>
+
+	<target name="package-amp-share" depends="_prepare_module, package-jar-share" description="Package AMP Share">
+
+		<echo>JSLINT output to "${build.dir}/make-share-war-jslint.log" </echo>
+		<jslint options="undef,white,sloppy,forin,evil" haltOnFailure="false">
+			<predef>jQuery,$$</predef>
+			<!-- <formatter type="plain"  /> -->
+			<formatter type="junit" destfile="${build.dir}/jslint-reports" />
+			<fileset dir="${javascript-share.source.dir}" includes="**/*.js" />
+		</jslint>
+
+		<!-- Copie des fichiers web -->
+		<copy todir="${build.js.dir}" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${web-share.source.dir}" />
+		</copy>
+
+		<yuicompress fromdir="${web-share.source.dir}" todir="${build.js.dir}" excludes="**/*-min.js,**/*.min.js,**/search-tri.lib.js" warn="yuicompress.warn">
+			<include name="**/*.js" />
+		</yuicompress>
+
+		<zip destfile="${amp-share.file}" encoding="UTF-8">
+			<fileset dir="${basedir}">
+				<include name="${amp.file.properties}" />
+				<include name="${amp.file.mappings}" />
+				<include name="WEB-INF/**/*" />
+				<include name="lib/**/*" />
+				<exclude name="lib/*.jar" />
+			</fileset>
+			<zipfileset dir="${share-lib.dir}" prefix="lib" />
+			<zipfileset file="${jar-share.file}" prefix="lib" />
+			<zipfileset dir="${build.js.dir}" prefix="web" />
+			<zipfileset dir="${config-share.dir}/" prefix="config/" />
+		</zip>
+
+	</target>
+
+	<target name="make-wars" depends="make-alfresco-war,make-share-war " description="Generation des WAR" />
+
+	<target name="make-alfresco-war" depends="package-jar-alfresco" description="Generation du WAR alfresco">
+		<delete file="${build.dir}/alfresco-${war.file}" />
+
+		<!-- Copie des fichiers web -->
+		<copy todir="${build.webapp-alfresco.dir}" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${web-alfresco.source.dir}" />
+		</copy>
+
+		<!-- Copie des fichiers lib -->
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF/lib" encoding="UTF8" failonerror="false" verbose="${ant-verbose}">
+			<fileset file="${jar-alfresco.file}" />
+			<fileset dir="${alfresco-lib.dir}" />
+		</copy>
+
+		<!-- Copie des webscripts -->
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF/classes/alfresco/extension/templates/webscripts" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${webscripts-alfresco.source.dir}" />
+		</copy>
+
+		<!-- Copie des fichiers config -->
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${web-inf-alfresco.source.dir}" />
+		</copy>
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF/classes" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${config-alfresco.dir}" />
+		</copy>
+
+		<!-- Generation du war -->
+		<copy file="${alfresco.file.war}" tofile="${build.dir}/alfresco-${war.file}" verbose="${ant-verbose}" />
+		<zip destfile="${build.dir}/alfresco-${war.file}" update="true" encoding="UTF-8" level="1" comment="${project.name}" roundup="off">
+			<zipfileset dir="${build.webapp-alfresco.dir}" excludes="WEB-INF/*.tld,**/*.tmp.*" />
+		</zip>
+	</target>
+
+	<target name="make-share-war" depends="package-jar-share,prepare-files-Share" description="Generation du WAR share">
+
+		<!-- Generation du war -->
+		<copy file="${share.file.war}" tofile="${build.dir}/share-${war.file}" verbose="${ant-verbose}" />
+		<zip destfile="${build.dir}/share-${war.file}" update="true" encoding="UTF-8" level="1" comment="${project.name}" roundup="off">
+			<zipfileset dir="${build.webapp-share.dir}" excludes="WEB-INF/*.tld,**/*.tmp.*" />
+		</zip>
+	</target>
+
+
+	<!-- DEV : Déploiement des fichiers dans les dossier d'Alfresco -->
+	<target name="prepare-files-Alfresco" description="Deploiment direct sur share pour test" depends="package-jars">
+
+		<delete file="${build.dir}/alfresco-${war.file}" />
+
+		<!-- Copie des fichiers web -->
+		<copy todir="${build.webapp-alfresco.dir}" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${web-alfresco.source.dir}" />
+		</copy>
+
+		<!-- Copie des fichiers lib -->
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF/lib" encoding="UTF8" failonerror="false" verbose="${ant-verbose}">
+			<fileset file="${jar-alfresco.file}" />
+			<fileset dir="${alfresco-lib.dir}" />
+		</copy>
+
+		<!-- Copie des webscripts -->
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF/classes/alfresco/extension/templates/webscripts" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${webscripts-alfresco.source.dir}" />
+		</copy>
+
+		<!-- Copie des fichiers config -->
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${web-inf-alfresco.source.dir}" />
+		</copy>
+		<copy todir="${build.webapp-alfresco.dir}/WEB-INF/classes" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${config-alfresco.dir}" />
+		</copy>
+
+
+	</target>
+
+	<target name="deploy-files-Alfresco" description="Deploiment direct sur share pour test" depends="prepare-files-Alfresco">
+		<!-- Copy Alfresco webapps -->
+		<copy todir="${alfresco-dev.webapps}/alfresco" verbose="true" taskname="alfresco-webapps">
+			<fileset dir="${build.webapp-alfresco.dir}" />
+		</copy>
+	</target>
+
+
+	<!-- DEV : Déploiement des fichiers dans les dossier Share -->
+	<target name="prepare-files-Share" description="Deploiment direct sur share pour test" depends="package-jar-share">
+
+		<delete file="${build.dir}/share-${war.file}" />
+
+		<echo>JSLINT output to "${build.dir}/make-share-war-jslint.log" </echo>
+		<jslint options="undef,white,sloppy,forin,evil" haltOnFailure="false">
+			<predef>jQuery,$$</predef>
+			<!-- <formatter type="plain"  /> -->
+			<formatter type="junit" destfile="${build.dir}/jslint-reports" />
+			<fileset dir="${javascript-share.source.dir}" includes="**/*.js" />
+		</jslint>
+
+		<!-- Copie des fichiers web -->
+		<copy todir="${build.webapp-share.dir}" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${web-share.source.dir}" />
+		</copy>
+
+		<yuicompress fromdir="${web-share.source.dir}" todir="${build.webapp-share.dir}" excludes="**/*-min.js,**/*.min.js,**/search-tri.lib.js" warn="yuicompress.warn">
+			<include name="**/*.js" />
+		</yuicompress>
+
+		<!-- Copie des fichiers lib -->
+		<copy todir="${build.webapp-share.dir}/WEB-INF/lib" encoding="UTF8" failonerror="false" verbose="${ant-verbose}">
+			<fileset file="${jar-share.file}" />
+			<fileset dir="${share-lib.dir}" />
+		</copy>
+
+		<!-- Copie des toute la config -->
+		<copy todir="${build.webapp-share.dir}/WEB-INF/classes/alfresco" encoding="UTF8" verbose="${ant-verbose}">
+			<fileset dir="${config-share.dir}/alfresco/" />
+		</copy>
+
+		<copy todir="${build.webapp-share.dir}/WEB-INF/classes/org/springframework/extensions/surf" encoding="UTF8" failonerror="false" verbose="${ant-verbose}">
+			<fileset dir="${extensions.surf.dir}" />
+		</copy>
+
+	</target>
+
+	<target name="deploy-files-Share" description="Deploiment direct sur share pour test" depends="prepare-files-Share">
+		<!-- Copy Share src -->
+		<copy todir="${alfresco-dev.webapps}/share" verbose="true" taskname="share-webapps">
+			<fileset dir="${build.webapp-share.dir}">
+				<!--<exclude name="**/${jar-share.file}.jar" />-->
+			</fileset>
+		</copy>
+		<!--
+		<exec executable="./curl.sh">
+			<arg value="share" />
+		</exec>
+		-->
+
+	</target>
+
+	<target name="deploy-files" description="Deploiment direct sur share pour test" depends="deploy-files-Share,deploy-files-Alfresco">
+
+	</target>
+
+	<target name="deploy-files-Share-distant" description="Deploiment direct sur share pour test" depends="prepare-files-Share">
+		<!-- Copy Share src -->
+		<scp remoteToDir="${alfresco-dev.webapps.distant}/share" sftp="true" verbose="false" trust="true">
+			<fileset dir="${build.webapp-share.dir}">
+
+			</fileset>
+		</scp>
+
+	</target>
+
+	<target name="deploy-files-Alfresco-distant" description="Deploiment direct sur share pour test" depends="prepare-files-Alfresco">
+		<!-- Copy Share src -->
+		<scp remoteToDir="${alfresco-dev.webapps.distant}/alfresco" sftp="true" verbose="fase" trust="true">
+			<fileset dir="${build.webapp-alfresco.dir}">
+			</fileset>
+		</scp>
+	</target>
+
+	<target name="deploy-files-distant" description="Deploiment direct sur share pour test" depends="deploy-files-Share-distant,deploy-files-Alfresco-distant">
+
+	</target>
+
+
+	<target name="test" description="Deploiment direct sur share pour test">
+
+
+		<!-- Copie des webscripts -->
+		<copy todir="${build.webapp-share.dir}/WEB-INF/classes/alfresco" encoding="UTF8" verbose="true">
+			<fileset dir="${config-share.dir}/alfresco/" />
+		</copy>
+	</target>
+
+
+
+
+	<path id="yuicompressor.classpath">
+		<filelist>
+			<file name="${yuicompressor-ant-task.jar}" />
+			<file name="${yuicompressor.jar}" />
+		</filelist>
+	</path>
+
+	<taskdef name="yuicompress" classname="net.noha.tools.ant.yuicompressor.tasks.YuiCompressorTask">
+		<classpath>
+			<path refid="yuicompressor.classpath" />
+		</classpath>
+	</taskdef>
+
+	<taskdef name="jslint" classname="com.googlecode.jslint4java.ant.JSLintTask" classpath="${jslint4java.jar}" />
+
+</project>

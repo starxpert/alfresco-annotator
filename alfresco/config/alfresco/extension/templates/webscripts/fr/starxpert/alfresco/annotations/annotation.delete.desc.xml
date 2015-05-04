@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>delete annotation</shortname>
+	<description>delete annotation</description>
+	<url>/fr/starxpert/alfresco/annotations/delete</url>
+	<transaction>required</transaction>
+	<authentication>user</authentication>
+	<family>starxpert</family>
+</webscript>

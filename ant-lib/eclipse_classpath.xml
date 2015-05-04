@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="alfresco/source/java"/>
+    <classpathentry kind="src" path="alfresco/source/webscripts"/>
+    <classpathentry kind="src" path="share/source/java"/>
+    <classpathentry kind="src" path="share/source/webscripts"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/SDK AlfrescoEmbedded ${alfresco.version}"/>
+    <classpathentry kind="output" path="bin"/>
+</classpath>

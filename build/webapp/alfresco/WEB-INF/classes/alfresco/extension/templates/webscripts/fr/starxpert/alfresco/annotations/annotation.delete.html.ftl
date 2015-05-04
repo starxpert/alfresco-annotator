@@ -1,0 +1,1 @@
+<p>Delete successful :  "${total?string}"</p>

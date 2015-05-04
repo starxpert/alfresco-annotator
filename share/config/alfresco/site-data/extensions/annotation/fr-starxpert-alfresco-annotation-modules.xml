@@ -1,0 +1,32 @@
+<extension>
+	<modules>
+		<module>
+			<id>Annotator</id>
+			<auto-deploy>true</auto-deploy>
+			<components>
+				<component>
+					<region-id>web-preview</region-id>
+					<source-id>document-details</source-id>
+					<scope>template</scope>
+					<sub-components>
+						<sub-component id="Annotator" index="50">
+							<url>/fr/starxpert/alfresco/annotator</url>
+						</sub-component>
+					</sub-components>
+				</component>
+
+				<component>
+					<region-id>web-preview</region-id>
+					<source-id>document-version-details</source-id>
+					<scope>template</scope>
+					<sub-components>
+						<sub-component id="Annotator2" index="50">
+							<url>/fr/starxpert/alfresco/annotator</url>
+						</sub-component>
+					</sub-components>
+				</component>
+			</components>
+		</module>
+	</modules>
+	
+</extension>
