@@ -1,6 +1,3 @@
-/**
- * 
- */
 package fr.starxpert.alfresco.annotations;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -8,11 +5,6 @@ import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.namespace.QName;
 
-
-/**
- * @author unknow
- *
- */
 public class BehaviourFilter extends BaseScopableProcessorExtension {
 
 	private org.alfresco.repo.policy.BehaviourFilter behaviourFilter;

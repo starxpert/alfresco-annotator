@@ -1,9 +1,0 @@
-<webscript>
-	<shortname>get annotation</shortname>
-	<description>get annotations</description>
-	<url>/fr/starxpert/alfresco/annotations/get?format=json</url>
-	<format default="json">any</format>
-	<transaction>required</transaction>
-	<authentication>user</authentication>
-	<family>starxpert</family>
-</webscript>

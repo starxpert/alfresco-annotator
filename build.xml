@@ -1,11 +1,17 @@
 <?xml version="1.0"?>
+
 <!--
-    
 	Ant Build script from StarXpert 
-	version 2.1
+	version 2.3
 -->
 
-<project name="CDG56" default="deploy-files-distant" basedir="." xmlns:jsl="antlib:com.googlecode.jslint4java">
+<!DOCTYPE project [
+<!ENTITY eclipse_project SYSTEM "ant-lib/eclipse_project.xml">
+<!ENTITY eclipse_classpath SYSTEM "ant-lib/eclipse_classpath.xml">
+]>
+
+
+<project name="ANFR" default="package-amps" basedir="." xmlns:jsl="antlib:com.googlecode.jslint4java">
 	<property file="${basedir}/build.properties" />
 	<property file="${basedir}/module.properties" />
 
@@ -78,9 +84,8 @@
 	<!-- creates an eclipse .project and .classpath files -->
 	<target name="_generate_eclipse_project">
 		<basename property="project.dirname" file="${basedir}" />
-		<echo file=".project">
-			<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-			<projectDescription>
+		<echo file=".project"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
 				<name>${project.dirname}</name>
 				<comment>${project.title} - ${project.description}</comment>
 				<projects>
@@ -95,20 +100,19 @@
 				<natures>
 					<nature>org.eclipse.jdt.core.javanature</nature>
 				</natures>
-			</projectDescription>
+</projectDescription>
 ]]></echo>
 
-		<echo file=".classpath">
-			<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
-			<classpath>
-				<classpathentry kind="src" path="alfresco/source/java"/>
-				<classpathentry kind="src" path="alfresco/source/webscripts"/>
-				<classpathentry kind="src" path="share/source/java"/>
-				<classpathentry kind="src" path="share/source/webscripts"/>
-				<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-				<classpathentry combineaccessrules="false" kind="src" path="/SDK AlfrescoEmbedded ${alfresco.version}"/>
-				<classpathentry kind="output" path="bin"/>
-			</classpath>
+		<echo file=".classpath"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+		<classpathentry kind="src" path="alfresco/source/java"/>
+		<classpathentry kind="src" path="alfresco/source/webscripts"/>
+		<classpathentry kind="src" path="share/source/java"/>
+		<classpathentry kind="src" path="share/source/webscripts"/>
+		<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+		<classpathentry combineaccessrules="false" kind="src" path="/SDK AlfrescoEmbedded ${alfresco.version}"/>
+		<classpathentry kind="output" path="bin"/>
+</classpath>
 ]]></echo>
 	</target>
 
@@ -120,7 +124,7 @@
 		<!-- Compilation des sources java Alfresco -->
 		<mkdir dir="${build.jar-alfresco.dir}" />
 		<echo> ${java_version}</echo>
-		<javac classpathref="alfresco-class.path" debug="${java.debug}" srcdir="${java-alfresco.source.dir}" destdir="${build.jar-alfresco.dir}" includeantruntime="false" source="1.7" target="1.7" fork="yes" encoding="UTF-8" executable="${path.javac}">
+		<javac classpathref="alfresco-class.path" debug="${java.debug}" srcdir="${java-alfresco.source.dir}" destdir="${build.jar-alfresco.dir}" includeantruntime="false" source="1.8" target="1.8" fork="yes" encoding="UTF-8" executable="${path.javac}">
 			<compilerarg value="-Xlint:unchecked" />
 			<compilerarg value="-Xlint:deprecation" />
 		</javac>
@@ -388,11 +392,9 @@
 				<!--<exclude name="**/${jar-share.file}.jar" />-->
 			</fileset>
 		</copy>
-		<!--
 		<exec executable="./curl.sh">
 			<arg value="share" />
 		</exec>
-		-->
 
 	</target>
 
@@ -421,19 +423,6 @@
 	<target name="deploy-files-distant" description="Deploiment direct sur share pour test" depends="deploy-files-Share-distant,deploy-files-Alfresco-distant">
 
 	</target>
-
-
-	<target name="test" description="Deploiment direct sur share pour test">
-
-
-		<!-- Copie des webscripts -->
-		<copy todir="${build.webapp-share.dir}/WEB-INF/classes/alfresco" encoding="UTF8" verbose="true">
-			<fileset dir="${config-share.dir}/alfresco/" />
-		</copy>
-	</target>
-
-
-
 
 	<path id="yuicompressor.classpath">
 		<filelist>

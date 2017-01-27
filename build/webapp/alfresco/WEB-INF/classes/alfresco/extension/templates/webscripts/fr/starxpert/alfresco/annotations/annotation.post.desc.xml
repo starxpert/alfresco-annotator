@@ -1,9 +1,0 @@
-<webscript>
-	<shortname>store annotation</shortname>
-	<description>store annotation</description>
-	<url>/fr/starxpert/alfresco/annotations/post</url>
-	<format default="json">any</format>
-	<transaction>required</transaction>
-	<authentication>user</authentication>
-	<family>starxpert</family>
-</webscript>
