@@ -12,5 +12,5 @@
 <@script type="text/javascript" src="${page.url.context}/res/modules/annotator/lib/jquery-i18n-master/jquery.i18n-min.js"></@script>
 <@script type="text/javascript" src="${page.url.context}/res/modules/annotator/lib/jquery.dateFormat-min.js"></@script>
 <@script type="text/javascript" src="${page.url.context}/res/modules/annotator/lib/jquery.slimscroll-min.js"></@script>
-<@script type="text/javascript" src="${page.url.context}/res/modules/annotator/locale/fr/annotator-view-min.js"></@script>
+<@script type="text/javascript" src="${page.url.context}/res/modules/annotator/locale/annotator-view-min.js"></@script>
 <@script type="text/javascript" src="${page.url.context}/res/modules/annotator/annotator-main-min.js"></@script>
